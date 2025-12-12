@@ -1,0 +1,7 @@
+com\example\demo\controller\AuthController$LoginRequest.class
+com\example\demo\controller\AuthController$JwtResponse.class
+com\example\demo\controller\AuthController.class
+com\example\demo\service\JwtService.class
+com\example\demo\AuthValidServiceApplication.class
+com\example\demo\controller\AuthController$ValidationResponse.class
+com\example\demo\controller\AuthController$ValidationRequest.class
