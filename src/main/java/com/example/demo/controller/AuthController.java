@@ -21,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        if ("user".equals(request.username) && "pass".equals(request.password)) {
+        if (env.getProperty("username").equals(request.username) && env.getProperty("password").equals(request.password)) {
             String token = jwtService.generateToken(request.username);
             return ResponseEntity.ok(new JwtResponse(token));
         }
