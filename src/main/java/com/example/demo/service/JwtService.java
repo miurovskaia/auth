@@ -5,29 +5,34 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
 public class JwtService {
 
-    private final String jwtSecret = "myVeryStrongSecretKey_1234567890!@#$";
-    private final long jwtExpiration = 86400000; // 24h
-
-    private static final Set<String> REGISTERED_SERVICES = Set.of("products-service", "tariffs-service");
+   @Autowired
+   private Environment env;
 
     public boolean isServiceRegistered(String serviceId) {
-        return REGISTERED_SERVICES.contains(serviceId);
+        String serviceList = env.getProperty("registeredServices");
+        String[] parts = serviceList.split(",");
+        Set<String> serviceSet = new HashSet<>(Arrays.asList(parts));
+        return serviceSet.contains(serviceId);
     }
 
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("jwtExpiration"))))
                 .signWith(getSignInKey())
                 .compact();
     }
@@ -54,7 +59,7 @@ public class JwtService {
     }
 
     private SecretKey getSignInKey() {
-        byte[] keyBytes = jwtSecret.getBytes();
+        byte[] keyBytes = env.getProperty("jwtSecret").getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

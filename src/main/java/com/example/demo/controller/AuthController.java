@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final JwtService jwtService;
+
+    @Autowired
+    private Environment env;
 
     public AuthController(JwtService jwtService) {
         this.jwtService = jwtService;
@@ -32,6 +37,7 @@ public class AuthController {
         boolean valid = jwtService.validateToken(request.token);
         if (valid) {
             String username = jwtService.extractUsername(request.token);
+            System.out.println("username "+username);
             return ResponseEntity.ok(new ValidationResponse(true, username));
         } else {
             return ResponseEntity.ok(new ValidationResponse(false, "Invalid token"));
